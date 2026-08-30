@@ -9,21 +9,20 @@
  */
 
 import { ready } from "./utils/dom.js";
-
 import { initNavigation } from "./scripts/navigation.js";
-import { initTracking, setEventAllowlist, } from "./scripts/tracking.js";
+import { initTracking, setEventAllowlist } from "./scripts/tracking.js";
 import { initCTA } from "./scripts/cta-append.js";
 import { initConsentBanner } from "./scripts/consent-banner.js";
 import { initAttribution } from "./scripts/attribution.js";
 import { initTestimonials } from "./sections/testimonials.js";
 import { initFAQ } from "./sections/faq.js";
-
 import { ANALYTICS } from "../config/config.js";
 
 function initApp() {
   console.log("=== GTM DEBUG ===");
   console.log("GTM ID from config:", ANALYTICS.GTM_CONTAINER_ID);
   console.log("GTM ID from env:", import.meta.env.VITE_GTM_CONTAINER_ID);
+  console.log("Environment:", import.meta.env.MODE);
   
   // Verify the ID is valid
   if (ANALYTICS.GTM_CONTAINER_ID === "GTM-XXXXXXX") {
@@ -34,40 +33,32 @@ function initApp() {
     // Force hardcode for production as fallback
     if (import.meta.env.MODE === "production") {
       console.log("⚠️ Using hardcoded fallback for production");
-      // Replace with your REAL GTM ID
+      // REPLACE THIS WITH YOUR REAL GTM ID
       window.GTM_ID = "GTM-YOUR-REAL-ID-HERE";
+      // You need to override the config value
+      // This is a hack, but will work for testing
       ANALYTICS.GTM_CONTAINER_ID = window.GTM_ID;
+      console.log("✅ Overrode GTM ID with:", window.GTM_ID);
     }
   }
-  
 
-function initApp() {
-
+  // Initialize all modules
   initNavigation();
-
-
   initTracking();
 
   setEventAllowlist([
-  "page_view",
-  "cta_click",
-  "checkout_click",
-]);
+    "page_view",
+    "cta_click",
+    "checkout_click",
+  ]);
 
   initConsentBanner();
-
   initAttribution();
-
   initCTA();
-
-
-initTestimonials();
-
-  console.log("FAQ initialized");
+  initTestimonials();
   initFAQ();
 
+  console.log("✅ All modules initialized");
 }
-
 
 ready(initApp);
-}
